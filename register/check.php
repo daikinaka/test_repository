@@ -1,4 +1,21 @@
 <?php
+session_start();
+
+// 不正遷移制御
+// sign.phpから来ていない場合、signup.phpに強制遷移させる
+if (!isset($_SESSION['51_LearnSNS'])) {
+    header('Location: signup.php');
+    exit();
+}
+
+// echo '<pre>';
+// var_dump($_SESSION);
+// echo '</pre>';
+
+$name = $_SESSION['51_LearnSNS']['name'];
+$email = $_SESSION['51_LearnSNS']['email'];
+$password = $_SESSION['51_LearnSNS']['password'];
+$img_name = $_SESSION['51_LearnSNS']['img_name'];
 
 ?>
 <!DOCTYPE html>
@@ -16,16 +33,16 @@
                 <h2 class="text-center content_header">アカウント情報確認</h2>
                 <div class="row">
                     <div class="col-xs-4">
-                        <img src="../user_profile_img/misae.png" class="img-responsive img-thumbnail">
+                        <img src="../user_profile_img/<?php echo $img_name; ?>" class="img-responsive img-thumbnail">
                     </div>
                     <div class="col-xs-8">
                         <div>
                             <span>ユーザー名</span>
-                            <p class="lead">野原みさえ</p>
+                            <p class="lead"><?php echo htmlspecialchars($name); ?></p>
                         </div>
                         <div>
                             <span>メールアドレス</span>
-                            <p class="lead">misae@nohara.com</p>
+                            <p class="lead"><?php echo htmlspecialchars($email); ?></p>
                         </div>
                         <div>
                             <span>パスワード</span>
