@@ -1,5 +1,6 @@
 <?php
 session_start();
+require '../dbconnect.php';
 
 // 不正遷移制御
 // sign.phpから来ていない場合、signup.phpに強制遷移させる
@@ -16,6 +17,19 @@ $name = $_SESSION['51_LearnSNS']['name'];
 $email = $_SESSION['51_LearnSNS']['email'];
 $password = $_SESSION['51_LearnSNS']['password'];
 $img_name = $_SESSION['51_LearnSNS']['img_name'];
+
+if (!empty($_POST)) {
+    $sql = 'INSERT INTO `users` (`name`, `email`, `password`, `img_name`, `created`) VALUES(?, ?, ?, ?, NOW())';
+    $data = [$name, $email, password_hash($password, PASSWORD_DEFAULT), $img_name];
+    $stmt = $dbh->prepare($sql);
+    $stmt->execute($data);
+
+    // セッション情報の破棄
+    unset($_SESSION['51_LearnSNS']);
+    // 作成完了ページへ遷移
+    header('Location: thanks.php');
+    exit();
+}
 
 ?>
 <!DOCTYPE html>
@@ -48,8 +62,14 @@ $img_name = $_SESSION['51_LearnSNS']['img_name'];
                             <span>パスワード</span>
                             <p class="lead">●●●●●●●●</p>
                         </div>
-                        <form method="POST" action="thanks.php">
+                        <form method="POST" action="check.php">
+
+                            <!-- ?action=rewrite ?キー = 値
+                                signup.phpに戻るで遷移したことがわかるようにパラメータを付与している -->
                             <a href="signup.php?action=rewrite" class="btn btn-default">&laquo;&nbsp;戻る</a> | 
+                            <!-- 
+                                if(!empty($_POST))
+                             -->
                             <input type="hidden" name="action" value="submit">
                             <input type="submit" class="btn btn-primary" value="ユーザー登録">
                         </form>
